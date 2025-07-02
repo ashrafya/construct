@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+// frontend/src/App.js
+import { ChakraProvider } from '@chakra-ui/react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Auth/Login';
+import Dashboard from './components/Auth/Dashboard'; // Create this tomorrow!
+import ProtectedRoute from './components/Auth/ProtectedRoute'; // See below
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Login />} />
+          
+          {/* Protected Routes */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['consultant', 'contractor', 'client']}>
+                <Dashboard /> {/* Will build tomorrow */}
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/consultant-only" 
+            element={
+              <ProtectedRoute allowedRoles={['consultant']}>
+                <h1>Consultant Dashboard</h1>
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </Router>
+    </ChakraProvider>
   );
 }
 

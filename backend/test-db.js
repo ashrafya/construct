@@ -45,12 +45,3 @@ createDatabase(DB_FILENAME, (err, db) => {
         });
     });
 });
-
-// // Delete database after closing
-// deleteDatabase(DB_FILENAME, (err) => {
-//     if (err) {
-//         console.error('Failed to delete database:', err);
-//     } else {
-//         console.log('Database deleted');
-//     }
-// });
