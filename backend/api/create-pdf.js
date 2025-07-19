@@ -1,6 +1,5 @@
 const express = require('express');
 const PDFDocument = require('pdfkit');
-
 const router = express.Router();
 
 /**
@@ -33,10 +32,15 @@ function generatePdfBuffer(formData) {
     doc.fontSize(20).text('FieldLens PDF Report', { align: 'center' });
     doc.moveDown();
 
-    formData.forEach(item => {
-      doc.fontSize(14).text(`${item.label}: ${item.value}`);
+    for (const key in formData) {
+      doc.fontSize(14).text(`${key}: ${formData[key]}`);
       doc.moveDown(0.5);
-    });
+    }
+
+    // formData.forEach(item => {
+    //   doc.fontSize(14).text(`${item.key}: ${item.value}`);
+    //   doc.moveDown(0.5);
+    // });
 
     doc.end();
   });
@@ -44,10 +48,6 @@ function generatePdfBuffer(formData) {
 
 router.post('/', async (req, res) => {
   const { formData } = req.body;
-
-  if (!Array.isArray(formData)) {
-    return res.status(400).json({ error: 'Invalid formData' });
-  }
 
   try {
     const pdfBuffer = await generatePdfBuffer(formData);

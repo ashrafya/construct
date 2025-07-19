@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import './GeneratePdfButton.css';
 
 const API_PORT = 5000;
 const API_ENDPOINT = '/api/create-pdf';
@@ -57,7 +58,7 @@ function GeneratePdfButton({ formData }) {
   }, [formData]);
 
   return (
-    <button onClick={handleGeneratePdf} disabled={loading}>
+    <button className="generate-pdf-button" onClick={handleGeneratePdf} disabled={loading}>
       {loading ? 'Generating...' : 'Generate PDF'}
     </button>
   );
