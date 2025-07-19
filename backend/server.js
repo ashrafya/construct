@@ -5,13 +5,24 @@ const bodyParser = require('body-parser'); // Parse JSON requests
 const cors = require('cors'); // Allow frontend-backend communication
 const jwt = require('jsonwebtoken'); // JWT token handling
 const db = require('./db'); // Database connection
+const pdfRouter = require('./api/create-pdf');
+/*
+API Endpoints in this file:
 
+POST   /auth/register         - Register a new user (consultant, contractor, client)
+POST   /auth/login            - Login and receive JWT token
+GET    /consultant-only       - Protected route, accessible only by consultant role
+GET    /                      - Root route, server health check
+POST   /api/create-pdf        - PDF creation endpoint (handled by pdfRouter)
+*/
 const app = express();
 app.use(bodyParser.json());
 app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use('/api/create-pdf', pdfRouter);
 
 // JWT secret (store in .env in production!)
 const JWT_SECRET = process.env.JWT_SECRET || 'temp_secret'; 
+
 
 // ========================
 // MIDDLEWARE: Role Checker
@@ -99,6 +110,11 @@ app.post('/auth/login', (req, res) => {
 // ==============================
 app.get('/consultant-only', verifyRole(['consultant']), (req, res) => {
     res.send('Consultant secret area!');
+});
+
+// Root route for basic server check
+app.get('/', (req, res) => {
+    res.send('API server is running!');
 });
 
 // Start server
