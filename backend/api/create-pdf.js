@@ -25,6 +25,7 @@ function generatePdfBuffer(formData) {
     const doc = new PDFDocument();
     const buffers = [];
 
+
     doc.on('data', buffers.push.bind(buffers));
     doc.on('end', () => resolve(Buffer.concat(buffers)));
     doc.on('error', reject);
@@ -36,11 +37,6 @@ function generatePdfBuffer(formData) {
       doc.fontSize(14).text(`${key}: ${formData[key]}`);
       doc.moveDown(0.5);
     }
-
-    // formData.forEach(item => {
-    //   doc.fontSize(14).text(`${item.key}: ${item.value}`);
-    //   doc.moveDown(0.5);
-    // });
 
     doc.end();
   });
