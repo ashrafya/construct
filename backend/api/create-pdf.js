@@ -1,52 +1,75 @@
 const express = require('express');
-const PDFDocument = require('pdfkit');
+const puppeteer = require('puppeteer');
+const path = require('path');
+const fs = require('fs');
 const router = express.Router();
 
 /**
- * Generates a PDF buffer from the provided form data.
- *
- * @param {Array<{label: string, value: string}>} formData - 
- *   An array of objects representing form fields, each with a `label` and `value`.
- * @returns {Promise<Buffer>} 
- *   A promise that resolves to a Buffer containing the generated PDF data.
- *
- * @example
- * const formData = [
- *   { label: 'Name', value: 'John Doe' },
- *   { label: 'Email', value: 'john@example.com' }
- * ];
- * generatePdfBuffer(formData).then(buffer => {
- *   // Do something with the PDF buffer
- * });
+ * Converts HTML to PDF and returns a Buffer.
+ * @param {string} html - The HTML string to convert.
+ * @returns {Promise<Buffer>} - PDF buffer.
  */
-
-function generatePdfBuffer(formData) {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument();
-    const buffers = [];
-
-
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => resolve(Buffer.concat(buffers)));
-    doc.on('error', reject);
-
-    doc.fontSize(20).text('FieldLens PDF Report', { align: 'center' });
-    doc.moveDown();
-
-    for (const key in formData) {
-      doc.fontSize(14).text(`${key}: ${formData[key]}`);
-      doc.moveDown(0.5);
-    }
-
-    doc.end();
+async function htmlToPdfBuffer(html) {
+  const baseDir = path.dirname(path.resolve(__dirname, '../helpers/InformationPageReport.html'));
+  const browser = await puppeteer.launch({
+    args: ['--allow-file-access-from-files']
   });
+  const page = await browser.newPage();
+
+  // Create temporary HTML file to preserve relative paths
+  const tempHtmlPath = path.join(baseDir, `temp-${Date.now()}.html`);
+  fs.writeFileSync(tempHtmlPath, html);
+
+  try {
+    await page.goto(`file://${tempHtmlPath}`, {
+      waitUntil: 'networkidle0',
+      timeout: 30000
+    });
+
+    await page.evaluate(async () => {
+      const selectors = [
+        ...document.querySelectorAll('img'),
+        ...document.querySelectorAll('*[style*="background-image"]')
+      ];
+      await Promise.all(selectors.map(el => {
+        if (el.complete) return Promise.resolve();
+        return new Promise((resolve) => {
+          el.addEventListener('load', resolve);
+          el.addEventListener('error', resolve);
+        });
+      }));
+    });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true
+    });
+    return pdfBuffer;
+  } finally {
+    fs.unlinkSync(tempHtmlPath);
+    await browser.close();
+  }
 }
 
 router.post('/', async (req, res) => {
-  const { formData } = req.body;
+  const { html } = req.body;
+  console.log(req.body);
+  // will use this check for something else later
+  // if (!html) {
+  //   return res.status(400).json({ error: 'Missing HTML content' });
+  // }
 
   try {
-    const pdfBuffer = await generatePdfBuffer(formData);
+    const filePath = path.join(__dirname, '../helpers/InformationPageReport.html');
+    if (!filePath) {
+      return res.status(400).json({ error: 'Missing file path' });
+    }
+    const absolutePath = path.resolve(filePath);
+    if (!fs.existsSync(absolutePath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    const fileHtml = fs.readFileSync(absolutePath, 'utf-8');
+    const pdfBuffer = await htmlToPdfBuffer(fileHtml);
     res
       .set({
         'Content-Type': 'application/pdf',

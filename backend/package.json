@@ -20,7 +20,10 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "framer-motion": "^12.23.0",
+    "jsdom": "^26.1.0",
     "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.10",
+    "puppeteer": "^24.14.0",
     "sqlite3": "^5.1.7"
   }
 }

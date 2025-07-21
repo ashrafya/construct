@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Site Visit Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: white;
+      color: #000;
+    }
+
+    .field-lens-logo{
+      justify-content: left;
+      max-width: 25px;
+      max-height: 25px;
+      border-radius: 50%;
+    }
+    .report-container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 30px;
+      font-weight: bold;
+      padding: 20px 0;;
+    }
+
+    .header-left {
+      text-align: left;
+      flex: 1;
+    }
+    .header-right {
+      text-align: right;
+      flex: 1;
+    }
+    .header-center {
+      font-size: 1.5rem;
+      text-align: center;
+      flex: 2;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      font-size: 0.95rem;
+    }
+
+    .divider {
+      margin: 25px 0;
+      border: none;
+      height: 2px;
+      background: #003B5C;
+    }
+
+    .details {
+      font-size: 0.95rem;
+    }
+
+    .details p {
+      margin: 10px 0;
+    }
+
+    .disclaimer {
+      margin-top: 10px;
+    }
+
+    .date-section {
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+
+    .contacts {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    .contact {
+      flex: 1;
+    }
+
+    .photos {
+      font-size: 0.95rem;
+    }
+
+    .photo-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .photo {
+      width: 48%;
+      text-align: center;
+    }
+
+    .photo-img {
+      width: 100%;
+      height: 180px;
+      margin-bottom: 5px;
+    }
+  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Site Visit Report</title>
+</head>
+<body>
+  <div class="report-container">
+    <header class="header" style="display: flex; align-items: center; justify-content: center; gap: 40px; padding: 20px 0;">
+      <div class="header-left">Luxury Hotel Complex</div>
+      <div class="header-center">Site Visit Report</div>
+      <div class="header-right">
+      <img src="../../assets/field-lens-logo.png" alt="Field Lens Logo" class="field-lens-logo"/>
+      </div>
+    </header>
+
+    <div class="info-grid">
+      <div><strong>Project Name</strong><br>Luxury Hotel Complex</div>
+      <div><strong>FFS Project Number</strong><br>2018490</div>
+      <div><strong>Report ID</strong><br>SV.07</div>
+      <div><strong>Author</strong><br>Hassan Zahidi</div>
+      <div><strong>Reviewer</strong><br>Nael Ashraf</div>
+      <div><strong>Client Name</strong><br>EllisDon</div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="details">
+      <p><strong>Present</strong><br>Nael Ashraf-Fieldlens, Rebecca Damsteegt-SGH</p>
+      <p><strong>Weather</strong><br>Sunny</p>
+      <p><strong>Temperature (°C)</strong><br>24</p>
+      <p class="disclaimer"><strong>Disclaimer</strong><br>
+        Site visits and field observations are conducted on a sampling basis, covering portions of completed and in-progress work observed at the time of each visit.
+        These observations are not exhaustive and do not absolve the Contractor or subcontractors from their responsibilities for quality control, compliance with the
+        construction documents, and adherence to all applicable codes and standards.
+      </p>
+    </div>
+
+    <div class="date-section">
+      <strong>Print Date</strong><br>07/08/2025
+    </div>
+
+    <div class="contacts">
+      <div class="contact">
+        <strong>Primary Contact</strong><br>
+        <p><strong>Name</strong><br>Nael Ashraf</p>
+        <p><strong>Email</strong><br>1naelashraf@gmail.com</p>
+        <p><strong>Phone</strong><br>(289) 681-5460</p>
+      </div>
+      <div class="contact">
+        <strong>Secondary Contact</strong><br>
+        <p><strong>Name</strong><br>Yawar Ashraf</p>
+        <p><strong>Email</strong><br>yawar1ashraf@gmail.com</p>
+        <p><strong>Phone</strong><br>(289) 885-6099</p>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="photos">
+      <strong>Photos</strong>
+      <div class="photo-row">
+        <div class="photo">
+          <img src="../../assets/algonquin-yawar.png" alt="Overview of building progress" class="photo-img" />
+          <p>SV.07.A – Overview of building progress.</p>
+        </div>
+        <div class="photo">
+          <img src="../../assets/yawar-turkey-boat-square.png" alt="Overview of building Entrance" class="photo-img" />
+          <p>SV.07.B – Overview of building Entrance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
