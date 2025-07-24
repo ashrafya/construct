@@ -2,7 +2,10 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
+const multer = require('multer');
+const upload = require('../../frontend/src/middleware/image-upload.js'); // Import multer middleware
 const router = express.Router();
+const generateInformationPageReport = require('../helpers/InformationPageReport.js');
 
 /**
  * Converts HTML to PDF and returns a Buffer.
@@ -52,24 +55,31 @@ async function htmlToPdfBuffer(html) {
 }
 
 router.post('/', async (req, res) => {
-  const { html } = req.body;
-  console.log(req.body);
-  // will use this check for something else later
-  // if (!html) {
-  //   return res.status(400).json({ error: 'Missing HTML content' });
-  // }
+  const { formData, images } = req.body;
+  console.log("running in create-pdf.js");
+  console.log("images:", images);
+  console.log("formData:", formData);
 
   try {
-    const filePath = path.join(__dirname, '../helpers/InformationPageReport.html');
-    if (!filePath) {
-      return res.status(400).json({ error: 'Missing file path' });
+    const html = generateInformationPageReport(formData, images);
+    if (!html) {
+      return res.status(400).json({ error: 'Failed to generate HTML content' });
     }
-    const absolutePath = path.resolve(filePath);
-    if (!fs.existsSync(absolutePath)) {
-      return res.status(404).json({ error: 'File not found' });
+
+    const pdfBuffer = await htmlToPdfBuffer(html);
+
+    if (Array.isArray(images)) {
+      for (const img of images) {
+        const filePath = img.url;
+        if (fs.existsSync(filePath)) {
+          try {
+            fs.unlinkSync(filePath);
+          } catch (err) {
+            console.error(`Failed to delete file ${filePath}:`, err);
+          }
+        }
+      }
     }
-    const fileHtml = fs.readFileSync(absolutePath, 'utf-8');
-    const pdfBuffer = await htmlToPdfBuffer(fileHtml);
     res
       .set({
         'Content-Type': 'application/pdf',

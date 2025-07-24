@@ -3,6 +3,10 @@ import GeneratePdfButton from './GeneratePdfButton';
 import { useState, useCallback } from 'react';
 // import { upload } from '../middleware/image-upload.js'; // Import multer middleware
 
+const API_PORT = 5000;
+const API_ENDPOINT = '/api/image-upload';
+const API_URL = `http://localhost:${API_PORT}${API_ENDPOINT}`;
+
 
 const InputField = ({
   label,
@@ -59,9 +63,10 @@ const ReportForm = () => {
     primaryContactPhone: '',
     secondaryContactName: '',
     secondaryContactEmail: '',
-    secondaryContactPhone: '',
-    photos: []
+    secondaryContactPhone: ''
   });
+
+  const [images, setImages] = useState([]); // State to hold photo files
 
   // Memoized handler to prevent re-creation on every render
   const handleInputChange = useCallback((e) => {
@@ -71,22 +76,40 @@ const ReportForm = () => {
       // Convert to number if input type is number
       [name]: type === "number" ? Number(value) : value
     }));
-    // console.log("formData:", formData);
   }, []);
 
 
   // Custom handler for file input
-  const handlePhotoChange = useCallback((e) => {
+  const handlePhotoChange = useCallback(async (e) => {
     const files = Array.from(e.target.files);
-    // Only store file object and name
-    const photos = files.map(file => ({
-      file,
-      name: file.name,
-    }));
-    setFormData(prev => ({
-      ...prev,
-      photos
-    }));
+    const uploadedImages = [];
+
+    for (const image of files) {
+      const formDataData = new FormData();
+      formDataData.append('image', image);
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: formDataData
+        });
+        const data = await response.json();
+        uploadedImages.push({
+          name: image.name,
+          file: image,
+          url: data.path // use the path returned by your endpoint
+        });
+      } catch (error) {
+        console.error('Image upload failed:', error);
+        uploadedImages.push({
+          name: image.name,
+          file: image,
+          url: null
+        });
+      }
+    }
+
+    setImages(uploadedImages);
   }, []);
 
   return (
@@ -112,7 +135,7 @@ const ReportForm = () => {
         <InputField label="Secondary Contact Phone" id="secondaryContactPhone" name="secondaryContactPhone" type="tel" placeholder="Secondary Contact Phone" onChange={handleInputChange} value={formData.secondaryContactPhone}/>
 
         <div className="reportform-field reportform-field-photos">
-          <label htmlFor="photos" className="reportform-photo-label">Photos</label>
+          <label htmlFor="photos" className="reportform-photo-label">Photos (Exactly 2 for now)</label>
           <input
             type="file"
             id="photos"
@@ -122,9 +145,9 @@ const ReportForm = () => {
             accept="image/png, image/jpeg, image/jpg"
             onChange={handlePhotoChange}
           />
-          {formData.photos.length > 0 && (
+          {images.length > 0 && (
             <ul>
-              {formData.photos.map((photo, idx) => (
+              {images.map((photo, idx) => (
                 <li key={idx}>{photo.name}</li>
               ))}
             </ul>
@@ -132,7 +155,7 @@ const ReportForm = () => {
           )}
         </div>
 
-        <GeneratePdfButton formData={formData} />
+        <GeneratePdfButton formData={formData} images={images} />
       </form>
     </div>
   );

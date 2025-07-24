@@ -13,9 +13,10 @@ const API_URL = `http://localhost:${API_PORT}${API_ENDPOINT}`;
  * @component
  * @param {Object} props
  * @param {Object} props.formData - The data to be sent to the API for PDF generation.
+ * @param {Object} props.images - The images to be included in the PDF.
  *
  * @example
- * <GeneratePdfButton formData={myFormData} />
+ * <GeneratePdfButton formData={myFormData} images={myImages} />
  *
  * // Internal State:
  * // - loading: Indicates whether the PDF generation is in progress.
@@ -24,8 +25,10 @@ const API_URL = `http://localhost:${API_PORT}${API_ENDPOINT}`;
  * // - handleGeneratePdf: Handles the click event, sends the request, processes the response,
  * //   and manages the download and loading state.
  */
-function GeneratePdfButton({ formData }) {
+function GeneratePdfButton({ formData, images }) {
   const [loading, setLoading] = useState(false);
+  // images can be an array of dictionaries (objects), e.g. [{ src: "...", alt: "..." }, ...]
+  // This will work as long as your backend expects and can handle this format.
 
   const handleGeneratePdf = useCallback(async () => {
     setLoading(true);
@@ -33,7 +36,7 @@ function GeneratePdfButton({ formData }) {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify({ formData, images }), // images can be an array of objects
       });
 
       const contentType = response.headers.get('Content-Type') || '';
@@ -55,7 +58,7 @@ function GeneratePdfButton({ formData }) {
     } finally {
       setLoading(false);
     }
-  }, [formData]);
+  }, [formData, images]); // include images in dependency array
 
   return (
     <button className="generate-pdf-button" onClick={handleGeneratePdf} disabled={loading}>
