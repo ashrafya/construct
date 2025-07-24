@@ -1,6 +1,7 @@
 import './ReportForm.css';
 import GeneratePdfButton from './GeneratePdfButton';
 import { useState, useCallback } from 'react';
+// import { upload } from '../middleware/image-upload.js'; // Import multer middleware
 
 
 const InputField = ({
@@ -41,17 +42,6 @@ const InputField = ({
 
 
 const ReportForm = () => {
-  const exampleFormData = [
-    { label: "Site Name", value: "Main Construction Site" },
-    { label: "Inspector", value: "Yawar Ashraf" },
-    { label: "Date", value: "2025-07-17" },
-    { label: "Weather Conditions", value: "Sunny" },
-    { label: "Site Conditions", value: "Dry and stable" },
-    { label: "Safety Issues", value: "None reported" },
-    { label: "Comments", value: "All systems operational" },
-    { label: "Next Steps", value: "Continue monitoring" },
-    { label: "Attachments", value: "None" }
-  ];
 
   const [formData, setFormData] = useState({
     // Initialize all fields to prevent undefined values
@@ -69,7 +59,8 @@ const ReportForm = () => {
     primaryContactPhone: '',
     secondaryContactName: '',
     secondaryContactEmail: '',
-    secondaryContactPhone: ''
+    secondaryContactPhone: '',
+    photos: []
   });
 
   // Memoized handler to prevent re-creation on every render
@@ -80,9 +71,23 @@ const ReportForm = () => {
       // Convert to number if input type is number
       [name]: type === "number" ? Number(value) : value
     }));
-    console.log("formData:", formData);
+    // console.log("formData:", formData);
   }, []);
 
+
+  // Custom handler for file input
+  const handlePhotoChange = useCallback((e) => {
+    const files = Array.from(e.target.files);
+    // Only store file object and name
+    const photos = files.map(file => ({
+      file,
+      name: file.name,
+    }));
+    setFormData(prev => ({
+      ...prev,
+      photos
+    }));
+  }, []);
 
   return (
     <div className="reportform-root">
@@ -107,21 +112,28 @@ const ReportForm = () => {
         <InputField label="Secondary Contact Phone" id="secondaryContactPhone" name="secondaryContactPhone" type="tel" placeholder="Secondary Contact Phone" onChange={handleInputChange} value={formData.secondaryContactPhone}/>
 
         <div className="reportform-field reportform-field-photos">
-          <label htmlFor="photos" className="reportform-label">Photos</label>
+          <label htmlFor="photos" className="reportform-photo-label">Photos</label>
           <input
             type="file"
             id="photos"
             name="photos"
             className="reportform-input"
             multiple
-            accept="image/*"
-            onChange={handleInputChange}
+            accept="image/png, image/jpeg, image/jpg"
+            onChange={handlePhotoChange}
           />
+          {formData.photos.length > 0 && (
+            <ul>
+              {formData.photos.map((photo, idx) => (
+                <li key={idx}>{photo.name}</li>
+              ))}
+            </ul>
+            
+          )}
         </div>
 
         <GeneratePdfButton formData={formData} />
       </form>
-      <div>{JSON.stringify(exampleFormData)}</div>
     </div>
   );
 }

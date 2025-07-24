@@ -8,8 +8,6 @@ const CreatePdfReport = () => {
 
   return ( 
     <div className="create-pdf-report-form" style={{
-      minWidth: "600px",
-      maxWidth: "1800px",
       flexGrow: 1,
       flexShrink: 1,
       flexBasis: "0%",

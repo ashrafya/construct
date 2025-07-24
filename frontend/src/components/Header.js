@@ -3,7 +3,7 @@ import './Header.css';
 const Header = () => {
   return (
     <header className="header">
-      <h1 className="header-title">FieldLens</h1>
+      <h1 className="header-title">FieldLens To change</h1>
       <nav className="header-nav">
         <a href="/" className="header-link">Home</a>
         <a href="/about" className="header-link">About</a>
